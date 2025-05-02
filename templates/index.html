@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiplayer Chat</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Chat</h1>
+  <div>
+    <label>Change name:</label>
+    <input id="newname">
+    <button onclick="changeName()">Update</button>
+  </div>
+  <ul id="messages"></ul>
+  <input id="msg" placeholder="Say something...">
+  <button onclick="send()">Send</button>
+
+  <script>
+    const socket = io();
+    let myName = "???";
+    let myColor = "#000";
+
+    socket.on("user_init", data => {
+      myName = data.name;
+      myColor = data.color;
+    });
+
+    socket.on("message", data => {
+      const li = document.createElement("li");
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = `[${data.name}]: `;
+      nameSpan.style.color = data.color;
+      li.appendChild(nameSpan);
+      li.append(data.msg);
+      document.getElementById("messages").appendChild(li);
+    });
+
+    function send() {
+      const input = document.getElementById("msg");
+      const msg = input.value.trim();
+      if (msg) socket.emit("chat", { msg });
+      input.value = "";
+    }
+
+    function changeName() {
+      const input = document.getElementById("newname");
+      const newName = input.value.trim();
+      if (newName) socket.emit("name_change", { name: newName });
+      input.value = "";
+    }
+  </script>
+</body>
+</html>

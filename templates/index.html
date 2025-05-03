@@ -1,24 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Multiplayer Chat</title>
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <title>Chat</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      margin: 0;
+      height: 100vh; /* Full height of the viewport */
+      overflow: hidden; /* Prevent overall page overflow */
+    }
+    #sidebar {
+      width: 200px;
+      border-right: 1px solid #ccc;
+      padding: 10px;
+      background: #f8f8f8;
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Sidebar stretches down to full height of the screen */
+      box-sizing: border-box;
+    }
+    #sidebar h3 {
+      margin: 0;
+      padding-bottom: 5px;
+    }
+    #sidebar ul {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+      overflow-y: auto;
+    }
+    #chat {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Ensure chat area does not grow taller than the screen */
+      overflow: hidden; /* Prevent chat from overflowing */
+    }
+    #messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding-right: 10px; /* Allow space for the scrollbar */
+    }
+    #msgForm {
+      display: flex;
+    }
+    #msgForm input[type="text"] {
+      flex-grow: 1;
+      padding: 5px;
+    }
+    .username {
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h1>Chat</h1>
-  <div>
-    <label>Change name:</label>
-    <input id="newname">
-    <button onclick="changeName()">Update</button>
+  <div id="sidebar">
+    <h3>Commands</h3>
+    <ul>
+      <li><code>/name [new_name]</code> - Change your name</li>
+    </ul>
+    <h3>Users</h3>
+    <ul id="userList"></ul>
   </div>
-  <ul id="messages"></ul>
-  <input id="msg" placeholder="Say something...">
-  <button onclick="send()">Send</button>
+  <div id="chat">
+    <div id="messages"></div>
+    <form id="msgForm">
+      <input id="msgInput" autocomplete="off" placeholder="Type a message" />
+      <button>Send</button>
+    </form>
+  </div>
 
   <script>
     const socket = io();
-    let myName = "???";
-    let myColor = "#000";
+    let myName = "";
+    let myColor = "";
 
     socket.on("user_init", data => {
       myName = data.name;
@@ -26,28 +84,41 @@
     });
 
     socket.on("message", data => {
-      const li = document.createElement("li");
-      const nameSpan = document.createElement("span");
-      nameSpan.textContent = `[${data.name}]: `;
-      nameSpan.style.color = data.color;
-      li.appendChild(nameSpan);
-      li.append(data.msg);
-      document.getElementById("messages").appendChild(li);
+      const div = document.createElement("div");
+      const messageText = data.is_system ? `<em>${data.msg}</em>` : `${data.name}: ${data.msg}`;
+      div.innerHTML = `<span class="username" style="color: ${data.color}">${messageText}</span>`;
+      document.getElementById("messages").appendChild(div);
+      div.scrollIntoView();
     });
 
-    function send() {
-      const input = document.getElementById("msg");
-      const msg = input.value.trim();
-      if (msg) socket.emit("chat", { msg });
-      input.value = "";
-    }
+    socket.on("user_list", users => {
+      const ul = document.getElementById("userList");
+      ul.innerHTML = "";
+      users.forEach(user => {
+        const li = document.createElement("li");
+        li.textContent = user.name;
+        li.style.color = user.color;
+        ul.appendChild(li);
+      });
+    });
 
-    function changeName() {
-      const input = document.getElementById("newname");
-      const newName = input.value.trim();
-      if (newName) socket.emit("name_change", { name: newName });
+    document.getElementById("msgForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const input = document.getElementById("msgInput");
+      const text = input.value.trim();
+      if (text.startsWith("/name ")) {
+        const newName = text.slice(6).trim();
+        if (newName) socket.emit("name_change", { name: newName });
+      } else if (text.length > 0) {
+        socket.emit("chat", { msg: text });
+      }
       input.value = "";
-    }
+    });
+
+    // Ask for users on reconnect just in case
+    socket.on("connect", () => {
+      socket.emit("get_users");
+    });
   </script>
 </body>
 </html>

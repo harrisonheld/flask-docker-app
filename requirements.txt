@@ -1,2 +1,4 @@
 flask
-flask-socketio
+flask_socketio
+eventlet
+flask_sqlalchemy

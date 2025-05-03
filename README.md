@@ -1,5 +1,5 @@
 # Flask Chat App
-A sreal-time chat app built with Flask and Flask-SocketIO.
+A real-time chat app built with Flask and Flask-SocketIO.
 
 ## Setup
 Use the following to run the site locally.

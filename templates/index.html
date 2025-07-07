@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doom Server Host</title>
+</head>
+<body>
+  <h1>Doom Server Host</h1>
+
+  {% if message %}
+    <p style="color: green;">{{ message }}</p>
+  {% endif %}
+  {% if error %}
+    <p style="color: red;">{{ error }}</p>
+  {% endif %}
+
+  <h2>Start a new server</h2>
+  <form method="post" action="/">
+    <label for="port">Choose port:</label>
+    <select name="port" id="port">
+      {% for port in available_ports %}
+        {% if port not in running_ports %}
+          <option value="{{ port }}">{{ port }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    <button type="submit" name="action" value="start">Start Server</button>
+  </form>
+
+  <h2>Running servers</h2>
+  {% if running_ports %}
+    <ul>
+      {% for port in running_ports %}
+        <li>
+          {{ local_ip }}:{{ port }}
+          <form method="post" action="/" style="display:inline;">
+            <input type="hidden" name="port" value="{{ port }}">
+            <button type="submit" name="action" value="stop">Stop</button>
+          </form>
+          <br />
+          <small>
+            Join command:
+            <code>{{ join_commands[port] }}</code>
+          </small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No servers running.</p>
+  {% endif %}
+</body>
+</html>

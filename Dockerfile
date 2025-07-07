@@ -1,12 +1,25 @@
-FROM python:3.12-alpine
+FROM python:3.12
+
 WORKDIR /workdir
 
-# Copy and install dependencies first (so they're cached unless requirements.txt changes)
+# install zandronum (and dependencies)
+RUN echo "deb http://debian.drdteam.org/ stable multiverse" > /etc/apt/sources.list.d/drdteam.list \
+ && wget -O - http://debian.drdteam.org/drdteam.gpg | apt-key add - \
+ && apt-get update \
+ && apt-get install -y zandronum
+
+# install python dependencies
 COPY requirements.txt .
-# use '--root-user-action=ignore' because this is inside a docker container, so idgaf if it runs as root
 RUN pip install --no-cache-dir --root-user-action=ignore -r requirements.txt
-# Now copy the rest of the source code
+
+# Copy the rest of the source code
 COPY . .
 
-EXPOSE 5000
+# Copy WAD files from host machine into the container
+# ~/.config/zandronum is a default directory for zandronum WAD files
+COPY wads/DOOM2.WAD /root/.config/zandronum/DOOM2.WAD
+COPY wads/back-to-saturn-x.pk3 /root/.config/zandronum/back-to-saturn-x.pk3
+COPY wads/1000-lines-3.wad /root/.config/zandronum/1000-lines-3.wad
+
+EXPOSE 5000 10666 10667  10668 10669 10670
 CMD ["python", "run.py"]

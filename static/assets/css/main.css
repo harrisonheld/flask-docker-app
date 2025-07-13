@@ -789,12 +789,15 @@ button,
   .button:disabled {
     opacity: 0.5; }
   @media screen and (max-width: 480px) {
-    input[type="submit"],
-    input[type="reset"],
-    input[type="button"],
-    button,
-    .button {
-      padding: 0; } }
+  input[type="submit"],
+  input[type="reset"],
+  input[type="button"],
+  button,
+  .button {
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+  }
+}
 
 /* Header */
 #header h1 {
@@ -860,7 +863,7 @@ button,
   -webkit-transition: opacity 0.5s ease-in-out;
   -ms-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
-  bottom: 4em;
+  bottom: 2.5em;
   color: rgba(255, 255, 255, 0.5);
   left: 4em;
   opacity: 0.5;

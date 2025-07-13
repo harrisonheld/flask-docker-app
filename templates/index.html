@@ -11,11 +11,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="static/assets/css/main.css" />
 	</head>
-	<body class="is-preload">
+	<body class="is-preload" data-success="{{ 'true' if success else 'false' }}">
 
 		<!-- Header -->
         <header id="header">
-            <h1>Rising Hammer Web Development</h1>
+            <h1>Rising Hammer</h1>
             <p>Websites made with power and precision.<br />
             Brought to you by <a href="https://github.com/harrisonheld/">Harrison Held</a>.</p>
         </header>
@@ -24,7 +24,7 @@
         <form id="contact-form" method="post" action="#">
             <input type="text" name="name" id="name" placeholder="Your Name" required />
             <input type="email" name="email" id="email" placeholder="Your Email Address" required />
-            <textarea name="message" id="message" placeholder="Your Message" required></textarea>
+            <textarea name="message" id="email-contents" placeholder="Your Message" required></textarea>
             <input type="submit" value="Contact Us" />
         </form>
 

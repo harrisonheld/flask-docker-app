@@ -72,9 +72,9 @@ input, select, textarea {
   font-size: 1rem;
   line-height: 1.5em;
 }
-#contact-form textarea#message {
+#contact-form textarea#email-contents {
   height: 8em; /* taller for longer text input */
-  resize: vertical;
+  resize: vertical; /* optionally allow vertical resize */
 }
 
 
@@ -477,7 +477,8 @@ form {
     transform: scale(1.05);
     height: 2.75em;
     line-height: 2.75em;
-    opacity: 0; }
+    opacity: 0;
+    padding-left: 0.5em;}
     form .message:before {
       -moz-osx-font-smoothing: grayscale;
       -webkit-font-smoothing: antialiased;

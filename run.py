@@ -43,16 +43,15 @@ def index():
                     smtp.login(GMAIL_APP_USER, GMAIL_APP_PASSWORD)
                     smtp.send_message(msg)
 
-            return redirect(url_for('thankyou'))
+            return render_template('index.html', success=True)
 
         except Exception as e:
-            return render_template('index.html',
-                                   error="Failed to send email. Please try again later.",
-                                   name=name, email=email, message=message,
-                                   submitted=False)
+            # Todo: perhapse show/log an error?
+            return render_template('index.html', success=False)
 
     # GET request
-    return render_template('index.html', submitted=False)
+    # success=False indicates no form submission yet
+    return render_template('index.html', success=False)
 
 @app.route('/thankyou')
 def thankyou():

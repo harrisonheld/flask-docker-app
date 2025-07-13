@@ -101,71 +101,39 @@
 
 		})();
 
-	// Signup Form.
-		(function() {
+	// Contact Form.
+	(function() {
+		"use strict";
 
-			// Vars.
-				var $form = document.querySelectorAll('#signup-form')[0],
-					$submit = document.querySelectorAll('#signup-form input[type="submit"]')[0],
-					$message;
+		var $form = document.querySelectorAll('#contact-form')[0];
+		var $message;
 
-			// Bail if addEventListener isn't supported.
-				if (!('addEventListener' in $form))
-					return;
+		// Create message span
+		$message = document.createElement('span');
+		$message.classList.add('message');
+		$form.appendChild($message);
 
-			// Message.
-				$message = document.createElement('span');
-					$message.classList.add('message');
-					$form.appendChild($message);
+		$message._show = function(type, text) {
+			$message.innerHTML = text;
+			$message.classList.add(type);
+			$message.classList.add('visible');
+			window.setTimeout(function() {
+				$message._hide();
+			}, 3000);
+		};
 
-				$message._show = function(type, text) {
+		$message._hide = function() {
+			$message.classList.remove('visible');
+		};
 
-					$message.innerHTML = text;
-					$message.classList.add(type);
-					$message.classList.add('visible');
+		// Show success message if backend told us so
+		var successFlag = document.body.getAttribute('data-success');
+		if (successFlag === 'true') {
+			$message._show('success', 'Thank you! Your message has been sent.');
+		}
 
-					window.setTimeout(function() {
-						$message._hide();
-					}, 3000);
+		// Optional: form submit just normal submit, no interception
+	})();
 
-				};
-
-				$message._hide = function() {
-					$message.classList.remove('visible');
-				};
-
-			// Events.
-			// Note: If you're *not* using AJAX, get rid of this event listener.
-				$form.addEventListener('submit', function(event) {
-
-					event.stopPropagation();
-					event.preventDefault();
-
-					// Hide message.
-						$message._hide();
-
-					// Disable submit.
-						$submit.disabled = true;
-
-					// Process form.
-					// Note: Doesn't actually do anything yet (other than report back with a "thank you"),
-					// but there's enough here to piece together a working AJAX submission call that does.
-						window.setTimeout(function() {
-
-							// Reset form.
-								$form.reset();
-
-							// Enable submit.
-								$submit.disabled = false;
-
-							// Show message.
-								$message._show('success', 'Thank you!');
-								//$message._show('failure', 'Something went wrong. Please try again.');
-
-						}, 750);
-
-				});
-
-		})();
 
 })();

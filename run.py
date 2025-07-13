@@ -16,21 +16,14 @@ GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip()
         message = request.form.get('message', '').strip()
 
-        if not name or not email or not message:
-            return render_template('index.html', 
-                                   error="All fields are required.",
-                                   name=name, email=email, message=message,
-                                   submitted=False)
-
         msg = EmailMessage()
-        msg['Subject'] = f"Rising Hammer Contact from {name}"
+        msg['Subject'] = f"Rising Hammer Contact from <{email}>"
         msg['From'] = GMAIL_APP_USER
         msg['To'] = GMAIL_APP_USER
-        msg.set_content(f"From: {name} <{email}>\n\n{message}")
+        msg.set_content(f"From: <{email}>\n\n{message}")
         msg['Reply-To'] = email
 
         try:

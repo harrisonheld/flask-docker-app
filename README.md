@@ -1,5 +1,6 @@
 ## Setup
-Use the following to run the site locally.
+Copy .env.example to .env, and fill in the variables.
+
 ```
 python3 -m venv venv
 source venv/bin/activate
